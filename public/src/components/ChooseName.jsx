@@ -9,7 +9,7 @@ import { setDisplayNameRoute } from "../utils/APIRoutes";
 import checkMark from "../assets/check-solid.svg";
 import styled from "styled-components";
 
-function ChooseName() {
+export default function ChooseName() {
   const { setCurrentUser, currentUser } = useContext(UserContext);
   const { setIsLoading } = useContext(LoadingContext);
   const [name, setName] = useState();
@@ -69,7 +69,6 @@ function ChooseName() {
   );
 }
 const primaryColor = "#8643ff";
-// const textColor = "#a172f7";
 const hoverColor = "#925bf5";
 const pageColor = "#111213ff";
 const iconsColor = "#2e3033";
@@ -90,17 +89,12 @@ const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 1rem;
-    border-radius: 50%;
     box-shadow: inset 0 0 0.5rem ${pageColor};
     height: 22rem;
     width: 22rem;
     background-color: #393b40;
     border-radius: 50%;
     padding: 2.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 
     img {
       height: 17rem;
@@ -166,4 +160,3 @@ const StyledToastContainer = styled(ToastContainer).attrs({
     background-color: ${primaryColor};
   }
 `;
-export default ChooseName;

@@ -1,22 +1,11 @@
 import styled from "styled-components";
 
 export function Loader() {
-  return (
-    <Styling>
-      <div className="sector1 sectors"></div>
-      <div className="sector2 sectors"></div>
-      <div className="sector3 sectors"></div>
-      <div className="sector4 sectors"></div>
-      <div className="sector5 sectors"></div>
-      <div className="sector6 sectors"></div>
-      <div className="sector7 sectors"></div>
-      <div className="sector8 sectors"></div>
-      <div className="sector9 sectors"></div>
-      <div className="sector10 sectors"></div>
-      <div className="sector11 sectors"></div>
-      <div className="sector12 sectors"></div>
-    </Styling>
-  );
+  const array = new Array(12);
+  for (let i = 1; i < 13; i++) {
+    array[i - 1] = <div key={i} className={`sector${i} sectors`}></div>;
+  }
+  return <Styling>{array}</Styling>;
 }
 
 const createAnimation = () => {

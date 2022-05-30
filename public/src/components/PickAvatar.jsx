@@ -6,7 +6,7 @@ import { UserContext } from "../contexts/user.context";
 import { setAvatarRoute } from "../utils/APIRoutes";
 import styled from "styled-components";
 
-function PickAvatar() {
+export default function PickAvatar() {
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const { setCurrentUser, currentUser } = useContext(UserContext);
   const { setIsLoading } = useContext(LoadingContext);
@@ -121,5 +121,3 @@ const Container = styled.div`
     }
   }
 `;
-
-export default PickAvatar;

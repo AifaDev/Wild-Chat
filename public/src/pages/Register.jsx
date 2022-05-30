@@ -14,7 +14,7 @@ import twitter from "../assets/twitter-brands.svg";
 import { registerRoute } from "../utils/APIRoutes";
 import { UserContext } from "../contexts/user.context";
 
-function Register() {
+export default function Register() {
   const { setCurrentUser } = useContext(UserContext);
   const navigate = useNavigate();
   const [inputs, setInputs] = useState({
@@ -322,4 +322,3 @@ const StyledToastContainer = styled(ToastContainer).attrs({
     background-color: ${primaryColor};
   }
 `;
-export default Register;

@@ -11,7 +11,7 @@ import PickAvatar from "../components/PickAvatar";
 import ChooseName from "../components/ChooseName";
 
 //make the invincible button not clickable incase it renders incorrectly
-function Main() {
+export default function Main() {
   const navigate = useNavigate();
   const { setCurrentUser, currentUser } = useContext(UserContext);
   const { isLoading, setIsLoading } = useContext(LoadingContext);
@@ -63,5 +63,3 @@ const Container = styled.div`
   justify-content: center;
   text-align: center;
 `;
-
-export default Main;

@@ -13,7 +13,7 @@ import github from "../assets/github-brands.svg";
 import twitter from "../assets/twitter-brands.svg";
 import { loginRoute } from "../utils/APIRoutes";
 
-function Login() {
+export default function Login() {
   const navigate = useNavigate();
   const { setCurrentUser } = useContext(UserContext);
   const [inputs, setInputs] = useState({
@@ -296,4 +296,3 @@ const StyledToastContainer = styled(ToastContainer).attrs({
     background-color: ${primaryColor};
   }
 `;
-export default Login;
