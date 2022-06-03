@@ -45,7 +45,7 @@ export default function ChooseName() {
         <div className="avatar-background">
           <img src={avatars[currentUser.avatarImage]} alt="avatar"></img>
         </div>
-        <div className="set-name-wrapper">
+        <div id="set-name-wrapper">
           <input
             className="set-display-name"
             placeholder="Enter a display name"
@@ -55,7 +55,7 @@ export default function ChooseName() {
             }}
           ></input>
           <button
-            className="set-name-button"
+            id="set-name-button"
             onClick={() => {
               setDisplayName(name);
             }}
@@ -100,7 +100,7 @@ const Container = styled.div`
       height: 17rem;
     }
   }
-  .set-name-wrapper {
+  #set-name-wrapper {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -119,12 +119,14 @@ const Container = styled.div`
       text-align: center;
       color: white;
       font-size: 1.4rem;
+      padding: 0 2%;
+
       &:focus {
         opacity: 100%;
       }
     }
   }
-  .set-name-button {
+  #set-name-button {
     display: flex;
     justify-content: center;
     align-items: center;

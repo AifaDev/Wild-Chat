@@ -10,3 +10,8 @@ body {
   max-width: 100vw;
   overflow: hidden;
 }
+
+input {
+  text-align: start !important;
+  unicode-bidi: plaintext !important;
+}
