@@ -4,8 +4,8 @@ export const getUser = async (req, res, next) => {
   try {
     const { username } = req.tokenData;
     const user = await User.findOne({ username });
-    const { displayName, email, avatarImage } = user;
-    res.json({ displayName, email, username, avatarImage });
+    const { displayName, email, avatarImage, _id } = user;
+    res.json({ displayName, email, username, avatarImage, id: _id });
   } catch (e) {
     next(e);
   }

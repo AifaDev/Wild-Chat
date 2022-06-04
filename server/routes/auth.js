@@ -7,14 +7,18 @@ import {
   setAvatar,
   setDisplayName,
 } from "../controllers/queryController.js";
+import { addMessage, getAllUsers } from "../controllers/messagesController.js";
 
 const router = express.Router();
 router.post("/register", registerUser);
 router.post("/login", loginUser);
+
 router.all("*", middleValidation);
+router.post("/addMessage", addMessage);
+router.post("/getAllUsers", getAllUsers);
+router.post("/setDisplayName", setDisplayName);
 router.post("/token", validateToken);
 router.get("/getUser", getUser);
 router.post("/setAvatar", setAvatar);
-router.post("/setDisplayName", setDisplayName);
 
 export default router;

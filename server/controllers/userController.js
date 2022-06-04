@@ -36,6 +36,7 @@ export const loginUser = async (req, res, next) => {
         username,
         avatar: user.avatarImage,
         displayName: user.displayName,
+        id: user._id,
       },
     });
   } catch (e) {
@@ -74,6 +75,7 @@ export const registerUser = async (req, res, next) => {
         username,
         avatar: user.avatarImage,
         displayName: user.displayName,
+        id: user._id,
       },
     });
   } catch (e) {

@@ -1,20 +1,35 @@
 import smile from "../assets/smile-regular.svg";
 import arrow from "../assets/arrow-right-solid.svg";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { EmojiPicker } from "./EmojiPicker";
 import styled from "styled-components";
 import background from "../assets/random-shaped-background.json";
+import axios from "axios";
+import { sendMessageRoute } from "../utils/APIRoutes";
+import { UserContext } from "../contexts/user.context";
 
 export default function ChatContainer(props) {
   const [showPicker, setShowPicker] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
+  const { currentUser } = useContext(UserContext);
 
   const addEmoji = ({ native }) => {
     setInputMessage((prev) => {
       return prev + native;
     });
   };
-  const handleMessage = (message) => {};
+  const handleMessage = async (message) => {
+    const token = localStorage.getItem("token");
+    await axios.post(
+      sendMessageRoute,
+      {
+        from: currentUser.id,
+        to: props.id,
+        messageBody: message,
+      },
+      { headers: { authorization: token } }
+    );
+  };
   const sendMessage = (e) => {
     e.preventDefault();
     if (inputMessage.length > 0) {

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import avatars from "../assets/avatars/avatars";
 import { UserContext } from "../contexts/user.context";
@@ -6,18 +6,37 @@ import ellipse from "../assets/ellipsis-vertical-solid.svg";
 import search from "../assets/magnifying-glass-solid.svg";
 import message from "../assets/message-solid.svg";
 import ChatContainer from "./ChatContainer";
+import axios from "axios";
+import { allUsersRoute } from "../utils/APIRoutes";
 
 export default function Chat() {
   const [selectedContact, setSelectedContact] = useState(null);
+  const [contacts, setContacts] = useState([]);
 
   const { currentUser } = useContext(UserContext);
-  const contacts = [
-    { avatarImage: 1, displayName: "Abdullah" },
-    { avatarImage: 2, displayName: "Khaled" },
-    { avatarImage: 3, displayName: "Fahad" },
-    { avatarImage: 4, displayName: "Salah" },
-    { avatarImage: 5, displayName: "Ziyad" },
-  ];
+
+  const getAllUsers = useCallback(async () => {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.post(
+      allUsersRoute,
+      { id: currentUser.id },
+      { headers: { authorization: token } }
+    );
+    setContacts(res.data);
+  }, [currentUser.id]);
+
+  useEffect(() => {
+    getAllUsers();
+  }, [getAllUsers]);
+
+  // const contacts = [
+  //   { avatarImage: 1, displayName: "Abdullah", id: "6297200c0d20b44461178097" },
+  //   { avatarImage: 2, displayName: "Khaled", id: "6297200c0d20b44461178097" },
+  //   { avatarImage: 3, displayName: "Fahad", id: "629a2517e8193611e30b5645" },
+  //   { avatarImage: 4, displayName: "Salah", id: "629a270657f470d7021ab500" },
+  //   { avatarImage: 5, displayName: "Ziyad", id: "6297200c0d20b44461178097" },
+  // ];
   return (
     <Container>
       <InterfaceContainer>
@@ -51,33 +70,16 @@ export default function Chat() {
                 </div>
               );
             })}
-            <div className="contact"></div>
-            <div className="contact"></div>
-            <div className="contact"></div>
-            <div className="contact"></div>
-            <div className="contact"></div>
-            <div className="contact"></div>
-            <div className="contact"></div>
-            <div className="contact"></div>
-            <div className="contact"></div>
-            <div className="contact"></div>
-            <div className="contact"></div>
-            <div className="contact"></div>
-            <div className="contact"></div>
-            <div className="contact"></div>
-            <div className="contact"></div>
-            <div className="contact"></div>
-            <div className="contact"></div>
-            <div className="contact"></div>
-            <div className="contact"></div>
           </div>
         </ContactsSection>
 
         {contacts.map((contact, index) => {
           return selectedContact === index ? (
             <ChatContainer
+              key={index}
               avatar={avatars[contact.avatarImage]}
               displayName={contact.displayName}
+              id={contact._id}
             ></ChatContainer>
           ) : (
             ""
@@ -142,6 +144,7 @@ const ContactsSection = styled.div`
       padding: 10%;
       width: 99%;
       min-height: 5.5rem;
+      max-height: 5.5rem;
       background-color: ${errorColor};
       border-radius: 0.3rem;
       display: flex;
