@@ -171,7 +171,7 @@ const FormContainer = styled.div`
       height: 3.5rem;
     }
     h1 {
-      color: white;
+      color: #d1d1d1;
       text-transform: uppercase;
     }
   }
@@ -238,7 +238,7 @@ const FormContainer = styled.div`
       background-color: transparent;
       border: 0.01rem solid #a1a1a1ff;
       border-radius: 0.3rem;
-      color: white;
+      color: #d1d1d1;
       font-size: 1rem;
       ::-ms-reveal {
         filter: invert(100%);
@@ -249,7 +249,7 @@ const FormContainer = styled.div`
     }
     button {
       background-color: ${primaryColor};
-      color: white;
+      color: #d1d1d1;
       padding: 0.7rem 2rem;
       border: none;
       font-weight: bold;
@@ -271,7 +271,7 @@ const FormContainer = styled.div`
       text-align: center;
     }
     span {
-      color: white;
+      color: #d1d1d1;
       text-align: center;
 
       a {

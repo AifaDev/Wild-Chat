@@ -35,7 +35,7 @@ export default function Main() {
 
   useEffect(() => {
     loadUser();
-  }, [loadUser]);
+  }, [loadUser, currentUser]);
 
   if (isLoading) {
     return (

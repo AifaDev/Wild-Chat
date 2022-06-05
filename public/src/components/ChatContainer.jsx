@@ -1,17 +1,53 @@
 import smile from "../assets/smile-regular.svg";
 import arrow from "../assets/arrow-right-solid.svg";
-import { useContext, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { EmojiPicker } from "./EmojiPicker";
 import styled from "styled-components";
 import background from "../assets/random-shaped-background.json";
 import axios from "axios";
-import { sendMessageRoute } from "../utils/APIRoutes";
+import { allMessagesRoute, sendMessageRoute } from "../utils/APIRoutes";
 import { UserContext } from "../contexts/user.context";
 
 export default function ChatContainer(props) {
   const [showPicker, setShowPicker] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [recievedMessage, setRecievedMessage] = useState(null);
   const { currentUser } = useContext(UserContext);
+  const scrollRef = useRef();
+
+  const getMessages = useCallback(async () => {
+    if (props.id) {
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        allMessagesRoute,
+        {
+          from: currentUser.id,
+          to: props.id,
+        },
+        { headers: { authorization: token } }
+      );
+      setMessages(res.data);
+      scrollRef.current.scrollIntoView();
+    }
+  }, [currentUser, props]);
+
+  useEffect(() => {
+    getMessages();
+    if (props.id) {
+      //   props.socket.current.on("message-recieve", (message) => {
+      //     setRecievedMessage({ fromMe: false, message: message });
+      //   });
+    }
+  }, [props.id]);
+
+  //   useEffect(() => {
+  //     recievedMessage && setMessages((prev) => [...prev, recievedMessage]);
+  //   }, [recievedMessage]);
+
+  useEffect(() => {
+    scrollRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const addEmoji = ({ native }) => {
     setInputMessage((prev) => {
@@ -29,12 +65,19 @@ export default function ChatContainer(props) {
       },
       { headers: { authorization: token } }
     );
+    // props.socket.current.emit("send-message", {
+    //   from: currentUser.id,
+    //   to: props.id,
+    //   messageBody: message,
+    // });
+    setMessages((prev) => [...prev, { fromMe: true, message: message }]);
   };
   const sendMessage = (e) => {
     e.preventDefault();
     if (inputMessage.length > 0) {
       handleMessage(inputMessage);
       setInputMessage("");
+      props.select(0);
     }
   };
 
@@ -44,7 +87,20 @@ export default function ChatContainer(props) {
         <img src={props.avatar} alt="avatar"></img>
         <h1>{props.displayName}</h1>
       </div>
-      <div className="chat"></div>
+      <div className="chat">
+        {messages.map((e, index) => {
+          return (
+            <div
+              className={`message-container ${e.fromMe ? "from-me" : ""}`}
+              key={index}
+            >
+              <p className="message">{e.message}</p>
+            </div>
+          );
+        })}
+        <div ref={scrollRef} />
+      </div>
+
       <form className="chat-footer" onSubmit={(e) => sendMessage(e)}>
         <div id="smile">
           <img
@@ -82,8 +138,12 @@ const Container = styled.div`
   display: grid;
   grid-template-columns: 100%;
   grid-template-rows: 8% 85% 7%;
+  overflow: hidden;
   background-color: #16181a;
   background-image: url("${background}");
+  max-height: 100%;
+  min-height: 100%;
+
   .chat-header {
     box-sizing: border-box;
     background-color: #1c1d1f;
@@ -98,11 +158,45 @@ const Container = styled.div`
     }
     h1 {
       font-size: 1.8rem;
-
-      color: white;
+      color: #d1d1d1;
     }
   }
   .chat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 2rem 9%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 100%;
+    min-height: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    .message-container {
+      display: flex;
+      align-items: center;
+      .message {
+        background-color: ${formColor};
+        max-width: 40%;
+        overflow-wrap: break-word;
+        font-size: 1.1rem;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        color: #d1d1d1;
+      }
+    }
+    .from-me {
+      justify-content: flex-end;
+      .message {
+        background-color: ${primaryColor};
+      }
+    }
+    &::-webkit-scrollbar {
+      width: 0.3rem;
+      &-thumb {
+        background-color: ${primaryColor};
+      }
+    }
   }
   .chat-footer {
     background-color: rgba(33, 34, 36, 0.5);
@@ -110,8 +204,6 @@ const Container = styled.div`
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    height: 100%;
-    width: 100%;
     gap: 3%;
 
     #smile {
@@ -119,7 +211,7 @@ const Container = styled.div`
       justify-content: center;
       align-items: center;
       transition: filter 0.15s ease;
-      width: 3%;
+      width: 2rem;
       img {
         filter: invert(35%);
       }
@@ -143,7 +235,7 @@ const Container = styled.div`
       border-radius: 0.3rem;
       text-align: left;
       padding: 0 2%;
-      color: white;
+      color: #d1d1d1;
       &:focus {
         outline: none;
         background-color: rgba(0, 0, 0, 0.2);

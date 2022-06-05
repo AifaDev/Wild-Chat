@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import avatars from "../assets/avatars/avatars";
 import { UserContext } from "../contexts/user.context";
@@ -7,14 +7,16 @@ import search from "../assets/magnifying-glass-solid.svg";
 import message from "../assets/message-solid.svg";
 import ChatContainer from "./ChatContainer";
 import axios from "axios";
-import { allUsersRoute } from "../utils/APIRoutes";
+import { allUsersRoute, host } from "../utils/APIRoutes";
+import { io } from "socket.io-client";
 
 export default function Chat() {
   const [selectedContact, setSelectedContact] = useState(null);
   const [contacts, setContacts] = useState([]);
+  const scrollToContact = useRef();
+  const socket = useRef();
 
   const { currentUser } = useContext(UserContext);
-
   const getAllUsers = useCallback(async () => {
     const token = localStorage.getItem("token");
 
@@ -28,15 +30,15 @@ export default function Chat() {
 
   useEffect(() => {
     getAllUsers();
-  }, [getAllUsers]);
+    if (currentUser) {
+      // socket.current = io(host);
+      // socket.current.emit("add-user", currentUser.id);
+    }
+  }, [currentUser, getAllUsers]);
 
-  // const contacts = [
-  //   { avatarImage: 1, displayName: "Abdullah", id: "6297200c0d20b44461178097" },
-  //   { avatarImage: 2, displayName: "Khaled", id: "6297200c0d20b44461178097" },
-  //   { avatarImage: 3, displayName: "Fahad", id: "629a2517e8193611e30b5645" },
-  //   { avatarImage: 4, displayName: "Salah", id: "629a270657f470d7021ab500" },
-  //   { avatarImage: 5, displayName: "Ziyad", id: "6297200c0d20b44461178097" },
-  // ];
+  useEffect(() => {
+    scrollToContact.current.scrollIntoView();
+  }, [selectedContact]);
   return (
     <Container>
       <InterfaceContainer>
@@ -61,6 +63,7 @@ export default function Chat() {
                 <div
                   key={index}
                   onClick={() => setSelectedContact(index)}
+                  ref={selectedContact === index ? scrollToContact : null}
                   className={`contact ${
                     selectedContact === index ? "selected" : ""
                   }`}
@@ -80,6 +83,8 @@ export default function Chat() {
               avatar={avatars[contact.avatarImage]}
               displayName={contact.displayName}
               id={contact._id}
+              socket={socket}
+              select={setSelectedContact}
             ></ChatContainer>
           ) : (
             ""
@@ -130,6 +135,7 @@ const ContactsSection = styled.div`
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    overflow-x: hidden;
     &::-webkit-scrollbar {
       width: 0.2rem;
       &-thumb {
@@ -169,7 +175,7 @@ const ContactsSection = styled.div`
       }
       h1 {
         font-size: 1.5rem;
-        color: white;
+        color: #d1d1d1;
       }
     }
     .selected {
@@ -183,7 +189,7 @@ const ContactsSection = styled.div`
 
   .contact-section-header {
     /* box-shadow: 10px 10px 16px 1px rgb(0 0 0 / 0.3); */
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid #d1d1d1;
     display: flex;
     flex-direction: row;
     align-items: center;

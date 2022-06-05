@@ -15,15 +15,39 @@ export const addMessage = async (req, res, next) => {
   }
 };
 
+export const getAllMessages = async (req, res, next) => {
+  try {
+    const { from, to } = req.body;
+    Message.find({
+      $or: [
+        { from: from, to: to },
+        { from: to, to: from },
+      ],
+    })
+      .sort({ createdAt: 1 })
+      .exec((err, docs) => {
+        if (err) {
+          throw err;
+        }
+
+        docs = docs.map((e) => {
+          return {
+            fromMe: e.from.toString() === from,
+            message: e.messageBody,
+          };
+        });
+        res.send(docs);
+      });
+  } catch (e) {
+    next(e);
+  }
+};
+
 export const getAllUsers = async (req, res, next) => {
   try {
     const { id } = req.body;
-    const messages = await Message.find({
+    Message.find({
       $or: [{ from: id }, { to: id }],
-      // $or: [
-      //   { from: "6297200c0d20b44461178097", to: "629660e34e160cd6910fa58e" },
-      //   { from: "629660e34e160cd6910fa58e", to: "6297200c0d20b44461178097" },
-      // ],
     })
       .select("from to")
       .populate({ path: "to", model: User })
@@ -59,17 +83,6 @@ export const getAllUsers = async (req, res, next) => {
 
         res.send(docs);
       });
-
-    // filtered = filtered.filter((e) => {
-    //   if (unique[e.username]) {
-    //     return false;
-    //   } else {
-    //     console.log(e.username);
-    //     unique[e.username] = true;
-    //     return unique[e.username];
-    //   }
-    // });
-    // res.send(filtered);
   } catch (e) {
     next(e);
   }

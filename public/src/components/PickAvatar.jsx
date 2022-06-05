@@ -69,7 +69,7 @@ const Container = styled.div`
   flex-direction: column;
   gap: 4rem;
   h1 {
-    color: white;
+    color: #d1d1d1;
   }
   .avatars {
     display: flex;
@@ -114,7 +114,7 @@ const Container = styled.div`
   .display-submit-avatar {
     transition: background-color 0.1s ease;
     background-color: ${primaryColor};
-    color: white;
+    color: #d1d1d1;
     cursor: pointer;
     &:hover {
       background-color: ${hoverColor};

@@ -6,6 +6,7 @@ export const setAvatarRoute = `${host}/api/auth/setAvatar`;
 export const setDisplayNameRoute = `${host}/api/auth/setDisplayName`;
 export const getUserRoute = `${host}/api/auth/getUser`;
 export const allUsersRoute = `${host}/api/auth/getAllUsers`;
+export const allMessagesRoute = `${host}/api/auth/getAllMessages`;
 export const recieveMessageRoute = `${host}/api/messages/getMessage`;
 export const sendMessageRoute = `${host}/api/auth/addMessage`;
 export const logoutRoute = `${host}/api/auth/logout`;

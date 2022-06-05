@@ -117,7 +117,7 @@ const Container = styled.div`
       border: 0.01rem solid #a1a1a1ff;
       border-radius: 0.3rem;
       text-align: center;
-      color: white;
+      color: #d1d1d1;
       font-size: 1.4rem;
       padding: 0 2%;
 
@@ -136,7 +136,7 @@ const Container = styled.div`
     border: none;
     transition: background-color 0.1s ease;
     background-color: ${primaryColor};
-    color: white;
+    color: #d1d1d1;
     cursor: pointer;
     &:hover {
       background-color: ${hoverColor};
