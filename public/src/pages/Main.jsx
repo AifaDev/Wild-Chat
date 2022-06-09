@@ -18,7 +18,6 @@ export default function Main() {
 
   const loadUser = useCallback(async () => {
     try {
-      console.log("run");
       const token = localStorage.getItem("token");
       const user = await axios
         .post(

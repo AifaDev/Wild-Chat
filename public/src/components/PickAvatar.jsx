@@ -35,7 +35,10 @@ export default function PickAvatar() {
                   selectedAvatar === index ? "selected" : ""
                 }`}
               >
-                <img src={avatars[index]} alt="avatar"></img>
+                <div
+                  style={{ backgroundImage: `url(${avatar})` }}
+                  className="content"
+                ></div>
               </div>
             );
           })}
@@ -72,11 +75,12 @@ const Container = styled.div`
     color: #d1d1d1;
   }
   .avatars {
+    max-width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-flow: row wrap;
+    justify-content: center;
     gap: 2rem;
     .avatar {
-      background-clip: padding-box;
       cursor: pointer;
       display: flex;
       justify-content: center;
@@ -87,19 +91,35 @@ const Container = styled.div`
       border-radius: 50%;
       border: 0.3rem solid transparent;
       transition: border-color 0.2s ease;
-      img {
+      aspect-ratio: 1/1;
+      .content {
         filter: drop-shadow(0 0 0.2rem #333);
+        background-size: auto 4.8rem;
+        background-position: center;
+        background-repeat: no-repeat;
         background-color: ${iconsColor};
+        background-attachment: cover;
         border-radius: 50%;
-        background-clip: border-box;
         padding: 0.8rem;
         height: 6.5rem;
+        aspect-ratio: 1/1;
+        width: 150%;
       }
     }
     .selected {
       border-color: ${primaryColor};
     }
   }
+
+  @media only screen and (max-height: 755px) {
+    gap: 1rem;
+  }
+  @media only screen and (max-width: 423px) {
+    .avatars {
+      gap: 1rem;
+    }
+  }
+
   .submit-avatar {
     margin-bottom: -4rem;
     margin-top: 2rem;

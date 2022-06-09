@@ -244,9 +244,14 @@ const InterfaceContainer = styled.div`
   grid-template-columns: 100%;
   grid-template-columns: 30% 70%;
   overflow: hidden;
+  @media only screen and (max-width: 720px) {
+    height: 100%;
+    width: 100%;
+  }
 `;
 
 const ContactsSection = styled.div`
+  min-height: 30px;
   background-color: #131517;
   display: grid;
   gap: 0.1%;
@@ -273,8 +278,8 @@ const ContactsSection = styled.div`
       border-bottom: 0.05rem solid ${pageColor};
       padding: 10%;
       width: 99%;
-      min-height: 5.5rem;
-      max-height: 5.5rem;
+      min-height: 4rem;
+      max-height: 4rem;
       background-color: ${errorColor};
       border-radius: 0.3rem;
       display: flex;
@@ -294,8 +299,7 @@ const ContactsSection = styled.div`
       }
       //FIX RESPONSIVNESS, BROKEN CONTAINER SIZE.
       img {
-        height: 4rem;
-        max-inline-size: 100%;
+        height: 3.5rem;
       }
       h1 {
         font-size: 1.5rem;
@@ -326,6 +330,9 @@ const ContactsSection = styled.div`
       align-items: center;
       gap: 2.5rem;
       height: 100%;
+      img {
+        min-height: 15px;
+      }
       #search-container {
         position: relative;
         height: 35%;
@@ -340,7 +347,7 @@ const ContactsSection = styled.div`
           display: block;
           z-index: 1;
           right: 0;
-          width: 22vw;
+          width: 21vw;
           height: 125%;
           display: block;
           position: absolute;
@@ -427,8 +434,23 @@ const ContactsSection = styled.div`
       padding: 0.4rem;
 
       .avatar {
-        height: 2.4rem;
+        height: 1.8rem;
       }
+    }
+  }
+  @media only screen and (max-width: 450px) {
+    .contact {
+      img {
+        height: 2rem !important;
+      }
+    }
+  }
+  @media only screen and (max-width: 720px) {
+    #contact-section-header {
+      justify-content: space-around;
+    }
+    .avatar-background {
+      display: none !important;
     }
   }
 `;

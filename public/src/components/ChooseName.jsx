@@ -6,13 +6,14 @@ import avatars from "../assets/avatars/avatars";
 import { LoadingContext } from "../contexts/loading.context";
 import { UserContext } from "../contexts/user.context";
 import { setDisplayNameRoute } from "../utils/APIRoutes";
+import background from "../assets/random-shaped-background.json";
 import checkMark from "../assets/check-solid.svg";
 import styled from "styled-components";
 
 export default function ChooseName() {
   const { setCurrentUser, currentUser } = useContext(UserContext);
   const { setIsLoading } = useContext(LoadingContext);
-  const [name, setName] = useState();
+  const [setName] = useState();
 
   const toastOptions = {
     position: "bottom-right",
@@ -45,24 +46,26 @@ export default function ChooseName() {
         <div className="avatar-background">
           <img src={avatars[currentUser.avatarImage]} alt="avatar"></img>
         </div>
-        <div id="set-name-wrapper">
+        <form
+          id="set-name-wrapper"
+          onSubmit={(e) => {
+            e.preventDefault();
+            setDisplayName(e.target.display.value);
+          }}
+        >
           <input
             className="set-display-name"
-            placeholder="Enter a display name"
+            placeholder="Enter a name"
             type="text"
+            name="display"
             onChange={(e) => {
               setName(e.target.value);
             }}
           ></input>
-          <button
-            id="set-name-button"
-            onClick={() => {
-              setDisplayName(name);
-            }}
-          >
+          <button id="set-name-button">
             <img src={checkMark} alt="checkmark" />
           </button>
-        </div>
+        </form>
       </Container>
       <StyledToastContainer limit={4} />)
     </>
@@ -75,12 +78,14 @@ const iconsColor = "#2e3033";
 const errorColor = "#16181a";
 
 const Container = styled.div`
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 3rem;
   background-color: ${pageColor};
+  background-image: url("${background}");
   width: 100vw;
   height: 100vh;
   text-align: center;
@@ -144,6 +149,21 @@ const Container = styled.div`
     img {
       height: 65%;
       filter: invert(100%);
+    }
+  }
+  @media only screen and (max-width: 445px) {
+    .avatar-background {
+      height: 11rem;
+      width: 11rem;
+
+      img {
+        height: 8rem;
+      }
+    }
+    #set-name-wrapper {
+      .set-display-name {
+        width: 10rem;
+      }
     }
   }
 `;

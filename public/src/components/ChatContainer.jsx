@@ -152,14 +152,17 @@ const Container = styled.div`
   min-height: 100%;
 
   .chat-header {
+    min-height: 30px;
     box-sizing: border-box;
-    background-color: #1c1d1f;
+    background-color: rgba(28, 29, 31, 0.8);
     border-bottom: 1px solid #131517;
     display: flex;
     flex-direction: row;
     align-items: center;
 
     img {
+      min-height: 25px;
+
       margin: 0 6%;
       height: 60%;
     }
@@ -206,6 +209,7 @@ const Container = styled.div`
     }
   }
   .chat-footer {
+    min-height: 40px;
     background-color: rgba(33, 34, 36, 0.5);
     display: flex;
     flex-direction: row;
