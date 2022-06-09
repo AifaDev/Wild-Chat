@@ -125,6 +125,7 @@ export default function ChatContainer(props) {
           id="send-message"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
+          autoComplete="off"
         />
         <button id="send">
           <img src={arrow} alt="arrow" />

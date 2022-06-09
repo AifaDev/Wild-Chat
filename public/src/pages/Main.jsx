@@ -18,11 +18,16 @@ export default function Main() {
 
   const loadUser = useCallback(async () => {
     try {
+      console.log("run");
       const token = localStorage.getItem("token");
       const user = await axios
-        .get(getUserRoute, {
-          headers: { authorization: token },
-        })
+        .post(
+          getUserRoute,
+          {},
+          {
+            headers: { authorization: token },
+          }
+        )
         .catch((e) => {
           navigate("/login");
         });
@@ -35,7 +40,7 @@ export default function Main() {
 
   useEffect(() => {
     loadUser();
-  }, [loadUser, currentUser]);
+  }, [loadUser]);
 
   if (isLoading) {
     return (

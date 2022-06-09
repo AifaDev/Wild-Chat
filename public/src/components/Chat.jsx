@@ -6,15 +6,30 @@ import ellipse from "../assets/ellipsis-vertical-solid.svg";
 import search from "../assets/magnifying-glass-solid.svg";
 import message from "../assets/message-solid.svg";
 import ChatContainer from "./ChatContainer";
+import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
-import { allUsersRoute, host } from "../utils/APIRoutes";
+import {
+  allUsersRoute,
+  getUserRoute,
+  host,
+  sendMessageRoute,
+} from "../utils/APIRoutes";
 import { io } from "socket.io-client";
+import { useNavigate } from "react-router-dom";
 
 export default function Chat() {
   const [selectedContact, setSelectedContact] = useState(null);
   const [contacts, setContacts] = useState([]);
+  const [query, setQuery] = useState(null);
+  const [filteredContacts, setFilteredContacts] = useState([]);
+
+  const [initiating, setInitiating] = useState(false);
+  const [dottedMenu, setDottedMenu] = useState(false);
+  const [searching, setSearching] = useState(false);
+  const [updateContacts, setUpdateContact] = useState(0); //Force update on initiate chat
   const scrollToContact = useRef();
   const socket = useRef();
+  const navigate = useNavigate();
 
   const { currentUser } = useContext(UserContext);
   const getAllUsers = useCallback(async () => {
@@ -26,11 +41,53 @@ export default function Chat() {
       { headers: { authorization: token } }
     );
     setContacts(res.data);
+    setFilteredContacts(res.data);
   }, [currentUser.id]);
+
+  const intiateChat = (e) => {
+    e.preventDefault();
+    setInitiating((prev) => !prev);
+  };
+
+  const startChat = async (e) => {
+    e.preventDefault();
+    setInitiating(false);
+
+    const token = localStorage.getItem("token");
+    try {
+      const res = await axios.post(
+        getUserRoute,
+        { username: e.target.user.value },
+        { headers: { authorization: token } }
+      );
+      await axios.post(
+        sendMessageRoute,
+        {
+          from: currentUser.id,
+          to: res.data.id,
+          messageBody: "Hello",
+        },
+        { headers: { authorization: token } }
+      );
+
+      setSelectedContact(0);
+      setUpdateContact((prev) => prev + 1);
+    } catch (e) {
+      toast.error("You have to enter a valid username.");
+    }
+  };
 
   useEffect(() => {
     getAllUsers();
-  }, [getAllUsers, selectedContact]);
+  }, [getAllUsers, selectedContact, updateContacts]);
+
+  useEffect(() => {
+    setFilteredContacts(
+      contacts.filter((e) => {
+        return e.displayName.includes(query);
+      })
+    );
+  }, [query]);
 
   useEffect(() => {
     if (currentUser) {
@@ -47,7 +104,7 @@ export default function Chat() {
     <Container>
       <InterfaceContainer>
         <ContactsSection>
-          <div className="contact-section-header">
+          <div id="contact-section-header">
             <div className="avatar-background">
               <img
                 className="avatar"
@@ -55,14 +112,76 @@ export default function Chat() {
                 alt="avatar"
               ></img>
             </div>
-            <div className="contact-section-widget">
-              <img className="search" src={search} alt="search" />
-              <img className="message" src={message} alt="message" />
-              <img className="ellipse" src={ellipse} alt="ellipse" />
+            <div id="contact-section-widget">
+              <div
+                id="ellipse-container"
+                onClick={() => {
+                  setDottedMenu((prev) => !prev);
+                }}
+              >
+                <img id="ellipse" src={ellipse} alt="ellipse" />
+                <button
+                  onClick={() => {
+                    localStorage.clear();
+                    navigate("/login");
+                  }}
+                  id={dottedMenu ? "dotted-menu" : ""}
+                >
+                  Log out
+                </button>
+              </div>
+
+              <div id="message-container">
+                <img
+                  id="message"
+                  src={message}
+                  alt="message"
+                  onClick={(e) => intiateChat(e)}
+                />
+                <form
+                  onSubmit={(e) => startChat(e)}
+                  id={initiating ? "initiating" : ""}
+                >
+                  <input
+                    type="text"
+                    name="user"
+                    placeholder="Enter receipent username."
+                    autoComplete="off"
+                  />
+                </form>
+              </div>
+              <div id="search-container">
+                <form
+                  className={`input-wrapper ${searching ? "searching" : ""}`}
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    setQuery(e.target.query.value);
+                  }}
+                >
+                  <input type="text" name="query" />
+                  <h3
+                    onClick={() => {
+                      setSearching(false);
+                      setQuery("");
+                    }}
+                  >
+                    X
+                  </h3>
+                </form>
+
+                <img
+                  id="search"
+                  src={search}
+                  alt="search"
+                  onClick={() => {
+                    setSearching((prev) => !prev);
+                  }}
+                />
+              </div>
             </div>
           </div>
           <div className="contacts">
-            {contacts.map((contact, index) => {
+            {filteredContacts.map((contact, index) => {
               return (
                 <div
                   key={index}
@@ -95,6 +214,7 @@ export default function Chat() {
           );
         })}
       </InterfaceContainer>
+      <StyledToastContainer></StyledToastContainer>
     </Container>
   );
 }
@@ -191,7 +311,7 @@ const ContactsSection = styled.div`
     }
   }
 
-  .contact-section-header {
+  #contact-section-header {
     /* box-shadow: 10px 10px 16px 1px rgb(0 0 0 / 0.3); */
     border-bottom: 1px solid #d1d1d1;
     display: flex;
@@ -200,21 +320,94 @@ const ContactsSection = styled.div`
     justify-content: space-between;
     padding: 0 4%;
     background-color: #1c1d1f;
-    .contact-section-widget {
+    #contact-section-widget {
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 2.5rem;
       height: 100%;
-      .search {
+      #search-container {
+        position: relative;
         height: 35%;
+        #search {
+          height: 100%;
+        }
+
+        .input-wrapper {
+          display: none;
+        }
+        .searching {
+          display: block;
+          z-index: 1;
+          right: 0;
+          width: 22vw;
+          height: 125%;
+          display: block;
+          position: absolute;
+          input {
+            background-color: ${formColor};
+            color: white;
+            padding: 0.5rem;
+            height: 100%;
+            width: 100%;
+          }
+          h3 {
+            color: white;
+            position: absolute;
+            right: 10px;
+            bottom: 15%;
+            &:hover {
+              cursor: pointer;
+            }
+          }
+        }
       }
-      .ellipse {
+
+      #ellipse-container {
         height: 40%;
+
+        #ellipse {
+          height: 100%;
+        }
+        button {
+          position: absolute;
+          display: none;
+          border: none;
+          border-radius: 0.2rem;
+          &:hover {
+            background-color: #999;
+          }
+        }
+        #dotted-menu {
+          padding: 0.4rem;
+          display: block;
+        }
       }
-      .message {
+
+      #message-container {
+        position: relative;
         height: 35%;
+        #message {
+          height: 100%;
+        }
+        form {
+          display: none;
+          position: absolute;
+          right: -40px;
+        }
+        #initiating {
+          display: block;
+          input {
+            color: white;
+            overflow: visible;
+            padding: 0.5rem;
+            background-color: ${formColor};
+            width: 10rem;
+            height: 2rem;
+          }
+        }
       }
+
       img {
         filter: invert(35%);
         transition: filter 0.15s ease;
@@ -237,5 +430,19 @@ const ContactsSection = styled.div`
         height: 2.4rem;
       }
     }
+  }
+`;
+const StyledToastContainer = styled(ToastContainer).attrs({
+  className: "toast-container",
+  toastClassName: "toast",
+  bodyClassName: "body",
+  progressClassName: "progress",
+})`
+  --toastify-icon-color-error: ${primaryColor};
+  .Toastify__toast {
+    background-color: ${errorColor};
+  }
+  .progress {
+    background-color: ${primaryColor};
   }
 `;

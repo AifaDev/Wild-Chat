@@ -2,8 +2,15 @@ import User from "../models/userModel.js";
 
 export const getUser = async (req, res, next) => {
   try {
+    if (req.body.username) {
+      req.tokenData.username = req.body.username;
+    }
     const { username } = req.tokenData;
+
     const user = await User.findOne({ username });
+    if (!user) {
+      throw "Error: Username not valid";
+    }
     const { displayName, email, avatarImage, _id } = user;
     res.json({ displayName, email, username, avatarImage, id: _id });
   } catch (e) {

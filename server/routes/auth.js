@@ -22,7 +22,7 @@ router.post("/getAllUsers", getAllUsers);
 router.post("/getAllMessages", getAllMessages);
 router.post("/setDisplayName", setDisplayName);
 router.post("/token", validateToken);
-router.get("/getUser", getUser);
+router.post("/getUser", getUser);
 router.post("/setAvatar", setAvatar);
 
 export default router;
