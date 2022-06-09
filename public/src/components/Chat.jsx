@@ -30,15 +30,19 @@ export default function Chat() {
 
   useEffect(() => {
     getAllUsers();
-    if (currentUser) {
-      // socket.current = io(host);
-      // socket.current.emit("add-user", currentUser.id);
-    }
-  }, [currentUser, getAllUsers]);
+  }, [getAllUsers, selectedContact]);
 
   useEffect(() => {
-    scrollToContact.current.scrollIntoView();
+    if (currentUser) {
+      socket.current = io(host);
+      socket.current.emit("add-user", currentUser.id);
+    }
+  }, []);
+
+  useEffect(() => {
+    scrollToContact.current?.scrollIntoView();
   }, [selectedContact]);
+
   return (
     <Container>
       <InterfaceContainer>

@@ -30,24 +30,27 @@ export default function ChatContainer(props) {
       setMessages(res.data);
       scrollRef.current.scrollIntoView();
     }
-  }, [currentUser, props]);
+  }, [currentUser.id, props.id]);
 
   useEffect(() => {
     getMessages();
-    if (props.id) {
-      //   props.socket.current.on("message-recieve", (message) => {
-      //     setRecievedMessage({ fromMe: false, message: message });
-      //   });
-    }
-  }, [props.id]);
-
-  //   useEffect(() => {
-  //     recievedMessage && setMessages((prev) => [...prev, recievedMessage]);
-  //   }, [recievedMessage]);
+  }, [getMessages]);
 
   useEffect(() => {
-    scrollRef.current.scrollIntoView({ behavior: "smooth" });
+    recievedMessage && setMessages((prev) => [...prev, recievedMessage]);
+  }, [recievedMessage]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    if (props.socket.current) {
+      props.socket.current.on("message-recieve", (message) => {
+        setRecievedMessage({ fromMe: false, message: message });
+      });
+    }
+  }, [props.socket]);
 
   const addEmoji = ({ native }) => {
     setInputMessage((prev) => {
@@ -56,6 +59,13 @@ export default function ChatContainer(props) {
   };
   const handleMessage = async (message) => {
     const token = localStorage.getItem("token");
+
+    props.socket.current.emit("send-message", {
+      from: currentUser.id,
+      to: props.id,
+      message: message,
+    });
+
     await axios.post(
       sendMessageRoute,
       {
@@ -65,11 +75,7 @@ export default function ChatContainer(props) {
       },
       { headers: { authorization: token } }
     );
-    // props.socket.current.emit("send-message", {
-    //   from: currentUser.id,
-    //   to: props.id,
-    //   messageBody: message,
-    // });
+
     setMessages((prev) => [...prev, { fromMe: true, message: message }]);
   };
   const sendMessage = (e) => {
