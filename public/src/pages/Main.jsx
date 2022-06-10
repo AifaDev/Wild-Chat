@@ -49,7 +49,11 @@ export default function Main() {
     );
   } else if (currentUser && currentUser.avatarImage === "") {
     return <PickAvatar></PickAvatar>;
-  } else if (currentUser && currentUser.displayName === "") {
+  } else if (
+    currentUser &&
+    currentUser.avatarImage !== "" &&
+    currentUser.displayName === ""
+  ) {
     return <ChooseName></ChooseName>;
   } else {
     return <Chat></Chat>;
